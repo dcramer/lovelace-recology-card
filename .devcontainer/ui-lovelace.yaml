@@ -1,0 +1,8 @@
+resources:
+  - url: http://127.0.0.1:5000/nexxtbus-card.js
+    type: module
+views:
+  - cards:
+      - type: custom:recology-card
+        name: Recology Card Development
+        entity: sensor.recology
