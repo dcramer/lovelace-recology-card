@@ -67,15 +67,21 @@ export class RecologyCard extends LitElement {
     return '';
   }
 
-  protected daysUntil(target: string): number {
+  protected daysUntil(target: string): string {
     const now = new Date();
-    const then = new Date(target);
-    const timeDelta = Math.abs(then.getTime() - now.getTime());
-    let days = Math.ceil(timeDelta / (1000 * 3600 * 24));
-    if (then.getTime() < now.getTime()) {
-      days = -days;
+    const currentHour = now.getHours();
+    // target is 2012-01-01 format
+    // pretend it happens at 5am (not accurate)
+    const then = new Date(target + 'T05:00:00').getTime();
+    const timeDelta = Math.abs(then - now.getTime());
+    const hours = Math.ceil(timeDelta / (1000 * 3600));
+    const days = Math.ceil(hours / 24);
+    if (hours < -12) {
+      return 'n/a';
+    } else if (hours < 24) {
+      return currentHour + hours < 23 ? 'today' : 'tomorrow';
     }
-    return days;
+    return `${days} day${days > 1 ? 's' : ''}`;
   }
 
   protected render(): TemplateResult | void {
@@ -106,7 +112,7 @@ export class RecologyCard extends LitElement {
                 <div class="info padName">
                   ${this.getFlagName(flag)}
                 </div>
-                <div class="date">${daysUntil} day${daysUntil != 1 ? 's' : ''}</div>
+                <div class="date">${daysUntil}</div>
               </div>
             `;
           })}
